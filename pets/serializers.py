@@ -12,5 +12,10 @@ class PetSerializer(serializers.Serializer):
         choices=SexOptions.choices,
         default=SexOptions.DEFAULT,
     )
-    group = GroupSerializer()
+    group = GroupSerializer(read_only=True)
     traits = TraitSerializer(many=True, read_only=True)
+
+    def create(self, validated_data: dict) -> Pet:
+        pet = Pet.objects.create(**validated_data)
+
+        return pet
