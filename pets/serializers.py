@@ -23,6 +23,6 @@ class PetSerializer(serializers.Serializer):
         group_dict = validated_data.pop("group")
 
         pet_obj = Pet.objects.create(**validated_data)
-        group = Group.objects.create(**group_dict, pet=pet_obj)
+        group = Group.objects.create(**group_dict)
 
         return pet_obj
