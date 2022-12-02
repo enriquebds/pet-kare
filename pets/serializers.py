@@ -2,6 +2,9 @@ from rest_framework import serializers
 from pets.models import SexOptions, Pet
 from traits.serializers import TraitSerializer
 from groups.serializers import GroupSerializer
+from groups.models import  Group
+from traits.models import Trait
+
 
 class PetSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -12,10 +15,14 @@ class PetSerializer(serializers.Serializer):
         choices=SexOptions.choices,
         default=SexOptions.DEFAULT,
     )
-    group = GroupSerializer(read_only=True)
+    group = GroupSerializer()
     traits = TraitSerializer(many=True, read_only=True)
 
     def create(self, validated_data: dict) -> Pet:
-        pet = Pet.objects.create(**validated_data)
 
-        return pet
+        group_dict = validated_data.pop("group")
+
+        pet_obj = Pet.objects.create(**validated_data)
+        group = Group.objects.create(**group_dict, pet=pet_obj)
+
+        return pet_obj
